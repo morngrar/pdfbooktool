@@ -1,0 +1,46 @@
+#!/usr/bin/python3
+
+# booktool - a script for generating print-ready A4 PDFs for book binding.
+#    
+# Part of the package 'pdfbooktool'
+#
+# Copyright (C) 2016  Svein-Kåre Bjørnsen
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from pdfbooktool import *
+
+if __name__=="__main__":
+    import sys
+    import os
+    
+    if len(sys.argv) == 2:
+        add_blank_pages(sys.argv[1])
+
+        with open("aux.pdf", "rb") as pdffile:
+            reader = PdfFileReader(pdffile)
+            
+            out = reorder_pages(reader, SCHEME_A6_PERFECT)
+            with open("reordered.pdf", "wb") as f:
+                out.write(f)
+                
+        a6_to_a4_merge("reordered.pdf")
+        
+        # cleanup
+        os.remove("aux.pdf")
+        os.remove("reordered.pdf")
+        
+    else:
+        print("Usage: " + sys.argv[0] + " [file]")
