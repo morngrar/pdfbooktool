@@ -15,7 +15,7 @@ setup(name='pdfbooktool',
         'Topic :: Printing',
         'Topic :: Utilities'
     ],
-    url='TBA',
+    url='https://github.com/morngrar/pdfbooktool',
     author='Svein-Kåre Bjørnsen',
     author_email='sveinkare@gmail.com',
     license='GPL',
