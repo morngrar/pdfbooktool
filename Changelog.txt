@@ -1,0 +1,7 @@
+v0.1.2
+    - Fixed an issue with the package structure. The script did not work once
+      installed before this.
+v0.1.1
+    - Changed how the usage-message from the script is displayed.
+v0.1.0
+    - First release to pypi and GitHub

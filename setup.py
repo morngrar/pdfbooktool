@@ -1,11 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def readme():
     with open('README.md') as f:
         return f.read()
 
 setup(name='pdfbooktool',
-    version='0.1.1',
+    version='0.1.2',
     description='Tool for formatting A6 PDFs into A4 ready for printing A6 books.',
     long_description=readme(),
     classifiers=[
@@ -19,12 +19,12 @@ setup(name='pdfbooktool',
     author='Svein-Kåre Bjørnsen',
     author_email='sveinkare@gmail.com',
     license='GPL',
-    packages=['pdfbooktool'],
+    include_package_data = True,
+    packages=find_packages(),
     install_requires=[
         'PyPDF2',
     ],
     scripts=[
         'bin/booktool'
     ],
-    zip_safe=False
 )
