@@ -125,8 +125,8 @@ def make_page(writer, reader, offset=0):
     
     page.mergeTranslatedPage(reader.pages[0+offset], 0, ty)
     page.mergeTranslatedPage(reader.pages[1+offset], tx, ty)
-    page.mergeTranslatedPage(reader.pages[2+offset], tx, 0)
-    page.mergeTranslatedPage(reader.pages[3+offset], 0, 0)
+    page.mergeTranslatedPage(reader.pages[2+offset], 0, 0)
+    page.mergeTranslatedPage(reader.pages[3+offset], tx, 0)
     
 def a6_to_a4_merge(pdf_file):
     
