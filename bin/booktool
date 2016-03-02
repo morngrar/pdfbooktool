@@ -34,7 +34,7 @@ if len(sys.argv) == 2:
         with open("reordered.pdf", "wb") as f:
             out.write(f)
                 
-    a6_to_a4_merge("reordered.pdf")
+    a6_to_a4_merge("reordered.pdf")    
         
     # cleanup
     os.remove("aux.pdf")

@@ -4,7 +4,7 @@ pdfbooktool
 A python 3 tool for use in creating your own books.
 
 There is currently only support for handling books in A6 format, printing on
-A4 paper.
+A4 paper. However, the input PDF can be any size.
 
 This package installs a script called 'booktool' and this is what you would
 actually use for preparing your PDFs.
@@ -15,7 +15,7 @@ Usage
 
 Navigate to the directory of your PDF, then do:
 
-$ booktool A6-file.pdf
+$ booktool input-file.pdf
 
 This will output a couple of intermediary files (which will be removed once the
 script is finished running) into the working directory, and eventually a file
@@ -34,9 +34,6 @@ Requirements
 
 This package requires 'PyPDF2' to work, the install process should install this
 automatically if needed.
-
-The script currently only works with PDF-files that have A6 dimensions, trying
-to run it with anything else will result in an error.
 
 
 Running under windows

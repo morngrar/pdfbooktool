@@ -117,23 +117,51 @@ def add_blank_page(writer, unit_size):
     page = writer.addBlankPage(unit_size[0], unit_size[1])
     return page
     
-def make_page(writer, reader, offset=0):
-    tx = UNIT_SIZE_A6[0]
-    ty = UNIT_SIZE_A6[1]
+def make_page(writer, reader, unit_size_in, unit_size_out, offset=0):
+    tx = unit_size_in[0]
+    ty = unit_size_in[1]
     
-    page = add_blank_page(writer, UNIT_SIZE_A4)
+    page = add_blank_page(writer, unit_size_out)
     
     page.mergeTranslatedPage(reader.pages[0+offset], 0, ty)
     page.mergeTranslatedPage(reader.pages[1+offset], tx, ty)
     page.mergeTranslatedPage(reader.pages[2+offset], 0, 0)
     page.mergeTranslatedPage(reader.pages[3+offset], tx, 0)
     
+def scale_to_size(reader, unit_size):
+    # Create a writer and populate with pages at unit_size.
+    # Scale and merge pages from reader, centered, onto these pages.
+    # return open BytesIO object written to by writer
+    
+    # For now, just write to aux.pdf 
+    
+    # determine scaling factor:
+    input_unit_size = reader.pages[0].mediaBox.upperRight
+    
+    factors = [a / b for a, b in zip(unit_size, input_unit_size)]
+    if factors[0] <= factors[1]:
+        # Use x-factor for scaling if this is lowest, or equal to, y-factor
+        factor = factors[0]
+    else:
+        # Otherwise, use the y-factor
+        factor = factors[1]
+
+    writer = PdfFileWriter()
+    
+    for in_page in reader.pages:
+        out_page = add_blank_page(writer, unit_size)
+        out_page.mergeScaledPage(in_page, factor, expand=True)
+    
+    with open("aux.pdf", "wb") as f:    
+        writer.write(f)
+    
 def a6_to_a4_merge(pdf_file):
     
     pdf = PdfFileReader(open(pdf_file, "rb"))
     
     if ceil_iter(pdf.pages[0].mediaBox.upperRight) != ceil_iter(UNIT_SIZE_A6):
-        raise PageError("Trying to merge PDF that is not A6 as A6")
+        scale_to_size(pdf, UNIT_SIZE_A6)
+        pdf = PdfFileReader(open("aux.pdf", "rb"))
         
     writer = PdfFileWriter()
     
@@ -143,7 +171,7 @@ def a6_to_a4_merge(pdf_file):
     
     page_offset = 0
     while page_offset < number_pages:
-        make_page(writer, pdf, page_offset)
+        make_page(writer, pdf, UNIT_SIZE_A6, UNIT_SIZE_A4, page_offset)
         page_offset += 4
     
     with open("out.pdf", "wb") as f:
