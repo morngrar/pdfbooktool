@@ -36,6 +36,7 @@ SCHEME_A5_PERFECT = 1
 
 # PDF-specific size dimensions
 UNIT_SIZE_A4 = (595.28000, 841.89000)
+UNIT_SIZE_A5 = (419.53039, 595.28000)
 UNIT_SIZE_A6 = (297.64063, 419.53039)
 
 class PageError(Exception):
@@ -122,11 +123,15 @@ def make_page(writer, reader, unit_size_in, unit_size_out, offset=0):
     ty = unit_size_in[1]
     
     page = add_blank_page(writer, unit_size_out)
-    
-    page.mergeTranslatedPage(reader.pages[0+offset], 0, ty)
-    page.mergeTranslatedPage(reader.pages[1+offset], tx, ty)
-    page.mergeTranslatedPage(reader.pages[2+offset], 0, 0)
-    page.mergeTranslatedPage(reader.pages[3+offset], tx, 0)
+
+    if unit_size_out is UNIT_SIZE_A4:
+        page.mergeTranslatedPage(reader.pages[0+offset], 0, ty)
+        page.mergeTranslatedPage(reader.pages[1+offset], tx, ty)
+        page.mergeTranslatedPage(reader.pages[2+offset], 0, 0)
+        page.mergeTranslatedPage(reader.pages[3+offset], tx, 0)
+    elif unit_size_out is UNIT_SIZE_A5:
+        # Need to figure this out! Google while sober
+        pass
     
 def scale_to_size(reader, unit_size):
     # Create a writer and populate with pages at unit_size.
@@ -158,7 +163,8 @@ def scale_to_size(reader, unit_size):
 def a6_to_a4_merge(pdf_file):
     
     pdf = PdfFileReader(open(pdf_file, "rb"))
-    
+
+    # Check if pdf size is A6, if not, scale.
     if ceil_iter(pdf.pages[0].mediaBox.upperRight) != ceil_iter(UNIT_SIZE_A6):
         scale_to_size(pdf, UNIT_SIZE_A6)
         pdf = PdfFileReader(open("aux.pdf", "rb"))
@@ -177,3 +183,25 @@ def a6_to_a4_merge(pdf_file):
     with open("out.pdf", "wb") as f:
         writer.write(f)
 
+def a6_to_a5_merge(pdf_file):
+
+    pdf = PdfFileReader(open(pdf_file, "rb"))
+
+    # Check if pdf size is A6, if not, scale.
+    if ceil_iter(pdf.pages[0].mediaBox.upperRight) != ceil_iter(UNIT_SIZE_A6):
+        scale_to_size(pdf, UNIT_SIZE_A6)
+        pdf = PdfFileReader(open("aux.pdf", "rb"))
+        
+    writer = PdfFileWriter()
+    
+    number_pages = pdf.getNumPages()
+    if number_pages % 2 != 0:
+        raise PageError("Number of pages in PDF not divisible by 2")
+    
+    page_offset = 0
+    while page_offset < number_pages:
+        make_page(writer, pdf, UNIT_SIZE_A6, UNIT_SIZE_A5, page_offset)
+        page_offset += 2 # might be wrong number...
+    
+    with open("out.pdf", "wb") as f:
+        writer.write(f)
