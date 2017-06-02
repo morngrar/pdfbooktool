@@ -24,21 +24,39 @@ from pdfbooktool import *
 import sys
 import os
     
-if len(sys.argv) == 2:
-    add_blank_pages(sys.argv[1])
+if len(sys.argv) > 1:
+    if "--a5paper" in sys.argv:
+        add_blank_pages(sys.argv[-1], SCHEME_A5_PERFECT)
+    else:
+        add_blank_pages(sys.argv[-1], SCHEME_A6_PERFECT)
+
 
     with open("aux.pdf", "rb") as pdffile:
         reader = PdfFileReader(pdffile)
+
+        if "--a5paper" in sys.argv:
+            out = reorder_pages(reader, SCHEME_A5_PERFECT)
+        else:
+            out = reorder_pages(reader, SCHEME_A6_PERFECT)
             
-        out = reorder_pages(reader, SCHEME_A6_PERFECT)
         with open("reordered.pdf", "wb") as f:
             out.write(f)
-                
-    a6_to_a4_merge("reordered.pdf")    
+
+    if "--a5paper" in sys.argv:
+        a6_to_a5_merge("reordered.pdf")
+    else:
+        a6_to_a4_merge("reordered.pdf")    
         
     # cleanup
     os.remove("aux.pdf")
     os.remove("reordered.pdf")
         
 else:
-    print("Usage: " + os.path.basename(sys.argv[0]) + " [file]")
+    print("Usage: " + os.path.basename(sys.argv[0]) + " [options] [file]")
+    print("  Available options:")
+    print("    --a5paper: Prepares an output PDF that is meant to print")
+    print("               on A5 paper for binding into an A6 book,")
+    print("               using the 'perfect binding' method.\n")
+    print("  Defaulting to preparing PDF for printing on A4 paper for")
+    print("  making A6 books using the 'perfect binding' method. The")
+    print("  A4 sheets needs to be cut afterwards, using this option.")

@@ -32,7 +32,8 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 
 # Reordering schemes
 SCHEME_A6_PERFECT = 0
-SCHEME_A5_PERFECT = 1
+SCHEME_A5_PERFECT = 1  # Works for both A4 paper -> A5 perfect and
+                       # A5 paper -> A6 perfect
 
 # PDF-specific size dimensions
 UNIT_SIZE_A4 = (595.28000, 841.89000)
@@ -53,7 +54,7 @@ def shuffle_pages(num, scheme):
         sequence = [3, -1, 5, 1, -3, -3, -1, -1]
     elif scheme == SCHEME_A5_PERFECT:
         sequence = [3, -1, -1, -1]
-
+    
     for page in range(num):
         book.append(0)
         
@@ -80,12 +81,22 @@ def calc_pages_to_add(pdfreader, scheme):
             else:
                 done = True
         return counter
+    elif scheme is SCHEME_A5_PERFECT:
+        counter = 0
+        pages = pdfreader.getNumPages()
+        done = False
+        while not done:
+            if pages % 4 != 0:
+                counter += 1
+                pages += 1
+            else:
+                done = True
+        return counter
     else:
         return None
 
-    # TODO A5_PERFECT
 
-def add_blank_pages(pdf_file):
+def add_blank_pages(pdf_file, scheme):
     """ Takes filename of pdf and number of blank pages to append.
         Writes to "output.pdf" in same directory."""
 
@@ -95,7 +106,7 @@ def add_blank_pages(pdf_file):
     for page in pdf.pages:
         writer.addPage(page)
 
-    for page in range(calc_pages_to_add(pdf, SCHEME_A6_PERFECT)):
+    for page in range(calc_pages_to_add(pdf, scheme)):
         writer.addBlankPage()
 
     with open("aux.pdf", "wb") as f:
@@ -119,19 +130,27 @@ def add_blank_page(writer, unit_size):
     return page
     
 def make_page(writer, reader, unit_size_in, unit_size_out, offset=0):
-    tx = unit_size_in[0]
-    ty = unit_size_in[1]
-    
-    page = add_blank_page(writer, unit_size_out)
 
     if unit_size_out is UNIT_SIZE_A4:
+        page = add_blank_page(writer, unit_size_out)
+        tx = unit_size_in[0]
+        ty = unit_size_in[1]
         page.mergeTranslatedPage(reader.pages[0+offset], 0, ty)
         page.mergeTranslatedPage(reader.pages[1+offset], tx, ty)
         page.mergeTranslatedPage(reader.pages[2+offset], 0, 0)
         page.mergeTranslatedPage(reader.pages[3+offset], tx, 0)
     elif unit_size_out is UNIT_SIZE_A5:
-        # Need to figure this out! Google while sober
-        pass
+        tx = unit_size_in[0]
+        ty = unit_size_in[1]
+        page = add_blank_page(writer, (UNIT_SIZE_A5[1], UNIT_SIZE_A5[0]))
+        pageone = reader.pages[0+offset]
+        pagetwo = reader.pages[1+offset]
+
+        page.mergeTranslatedPage(pageone,0,0)
+        page.mergeTranslatedPage(pagetwo,tx,0)
+
+        page.rotateClockwise(90)
+
     
 def scale_to_size(reader, unit_size):
     # Create a writer and populate with pages at unit_size.
@@ -200,8 +219,14 @@ def a6_to_a5_merge(pdf_file):
     
     page_offset = 0
     while page_offset < number_pages:
-        make_page(writer, pdf, UNIT_SIZE_A6, UNIT_SIZE_A5, page_offset)
-        page_offset += 2 # might be wrong number...
+        make_page(
+            writer,
+            pdf,
+            UNIT_SIZE_A6,
+            UNIT_SIZE_A5,
+            offset=page_offset
+        )
+        page_offset += 2 
     
     with open("out.pdf", "wb") as f:
         writer.write(f)
