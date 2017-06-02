@@ -5,8 +5,8 @@ def readme():
         return f.read()
 
 setup(name='pdfbooktool',
-    version='0.1.4',
-    description='Tool for formatting PDFs into A4 ready for printing A6 books.',
+    version='0.1.5',
+    description='Tool for converting PDFs into a format ready for printing A6 books.',
     long_description=readme(),
     classifiers=[
         'Development Status :: 4 - Beta',

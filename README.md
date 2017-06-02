@@ -3,10 +3,12 @@ pdfbooktool
 
 A python 3 tool for use in creating your own books.
 
-There is currently only support for handling books in A6 format, printing on
-A4 paper. However, the input PDF can be any size.
+The input PDF can be of any size, and the default output is an A4 PDF,
+ready to print twosided, cut, and bind to A6 books using the "perfect
+binding" method. Optionally, one can print on A5 paper, fold, and bind
+to an A6 book, using the same method.
 
-This package installs a script called 'booktool' and this is what you would
+This package installs a script called 'booktool' and this is what you would 
 actually use for preparing your PDFs.
 
 
@@ -19,12 +21,23 @@ In a terminal, navigate to the directory of your PDF, then do:
 $ booktool input-file.pdf
 ```
 
+Or optionally:
+
+```
+$ booktool --a5paper input-file.pdf
+```
+
+For A5-sized paper output.
+
 This will output a couple of intermediary files (which will be removed once the
 script is finished running) into the working directory, and eventually a file
-called 'out.pdf'. This new file is a reordered PDF with A4 dimensions, ready for
-double-sided printing. Once printed, you can cut the sheets in half and bind
-them together using a technique called "perfect binding". There exist several 
-videos on youtube that explains how to do this.
+called "out.pdf". This new file is a reordered PDF, ready for double-sided 
+printing. Use "long edge binding" as your double-sided setting on 
+your printer for A4. If you opted for A5 paper, use "short edge" instead.
+
+Once printed, you can cut the sheets in half (only needed if you print in A4) 
+and bind them together using a technique called "perfect binding". There exist
+several videos on youtube that explains how to do this.
 
 A good open-source tool for creating suitable PDFs is 'scribus'.
 

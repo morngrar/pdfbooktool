@@ -1,3 +1,5 @@
+v0.1.5
+    - Added support for outputing A5 PDFs for A6 perfect binding.
 v0.1.4
     - Added dynamic scaling of input PDFs. Now the input PDF can be any size;
       however, for best results it should be A6.
