@@ -23,7 +23,10 @@
 from math import ceil
 
 def ceil_iter(iterable):
-    """Takes iterable of floats and returns list of ceil'ed ints"""
+    """
+    Takes iterable of floats and returns list of ceil'ed ints
+    
+    """
     return [int(ceil(elem)) for elem in iterable]
 
 ##################################
@@ -44,8 +47,11 @@ class PageError(Exception):
     pass
 
 def shuffle_pages(num, scheme):
-    """ Takes a number (pages) and the reordering scheme to use.
-    Returns a list of indexes to use with page reordering. """
+    """
+    Takes a number (pages) and the reordering scheme to use.
+    Returns a list of indexes to use with page reordering.
+    
+    """
     
     book = []
     counter = 0
@@ -67,8 +73,11 @@ def shuffle_pages(num, scheme):
     return book
 
 def calc_pages_to_add(pdfreader, scheme):
-    """ Takes a PdfFileReader and scheme. Returns number of pages
-        to add for the selected scheme. """
+    """
+    Takes a PdfFileReader and scheme. Returns number of pages to 
+    add for the selected scheme. 
+    
+    """
     
     if scheme == SCHEME_A6_PERFECT:
         counter = 0
@@ -97,8 +106,11 @@ def calc_pages_to_add(pdfreader, scheme):
 
 
 def add_blank_pages(pdf_file, scheme):
-    """ Takes filename of pdf and number of blank pages to append.
-        Writes to "output.pdf" in same directory."""
+    """
+    Takes filename of pdf and number of blank pages to append. Writes to 
+    "output.pdf" in same directory.
+        
+    """
 
     writer = PdfFileWriter()
     pdf = PdfFileReader(open(pdf_file, "rb"))
@@ -113,8 +125,11 @@ def add_blank_pages(pdf_file, scheme):
         writer.write(f)
 
 def reorder_pages(pdfreader, scheme):
-    """ Takes PdfFileReader and reordering scheme. Returns 
-        PdfFileWriter, ordered according to scheme. """
+    """
+    Takes PdfFileReader and reordering scheme. Returns PdfFileWriter,
+    ordered according to scheme.
+    
+    """
     
     pageorder = shuffle_pages( pdfreader.getNumPages(),
                                scheme )
