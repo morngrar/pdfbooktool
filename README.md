@@ -70,5 +70,4 @@ Running under windows
 
 Running this script under Windows has barely been testet. Neither PyPDF2 nor
 pdfbooktool should use any features that are platform specific, however it 
-doesn't seem to currently work under Windows 7. Help with further testing and
-making it work, is wanted.
+doesn't seem to work under Windows 7. 
